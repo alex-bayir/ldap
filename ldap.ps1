@@ -41,9 +41,7 @@ function isAvailable($computer){
 }
 
 filter Ping {
-	if((($_.Name) -and (isAvailable -computer $_.Name)) -or (($_.IPAddress) -and (isAvailable -computer $_.IPAddress))){
-		$_
-	}
+	(($_.Name) -and (isAvailable -computer $_.Name)) -or (($_.IPAddress) -and (isAvailable -computer $_.IPAddress))
 }
 
 function Get-ADComputers($ping=$true,$data,$group=$false,$cvs,$delimeter=$null){
