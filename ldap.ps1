@@ -44,7 +44,7 @@ filter Ping {
 	(($_.Name) -and (isAvailable -computer $_.Name)) -or (($_.IPAddress) -and (isAvailable -computer $_.IPAddress))
 }
 
-function Get-ADComputers($ping=$true,$data,$group=$false,$cvs,$delimeter=$null){
+function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
     if (Get-Module -All -Name Microsoft.ActiveDirectory.Management) {
 		$list=foreach($fio in Get-Content $data -Encoding UTF8 | Where-Object {$_ -match '\w{4}.*'}) {
 			$users=$null
@@ -103,8 +103,8 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$cvs,$delimeter=$null){
 		
 		$delimeter=$(if ($delimeter.Length -gt 0) {$delimeter} else {","})
 		$list=$list | Select-Object -Property Name,AccountName,Available,Hosts,IPs,UserName,UserEnabled,CN
-		if($cvs -gt 0){
-			$list | Export-CSV $cvs -NoTypeInformation -Delimiter $delimeter -Encoding utf8
+		if($csv -gt 0){
+			$list | Export-CSV $csv -NoTypeInformation -Delimiter $delimeter -Encoding utf8
 		}else{
 			$list | Format-Table
 		}
@@ -120,4 +120,4 @@ if (!(Get-Module -All -Name Microsoft.ActiveDirectory.Management)) {
     Import-Module $ADCModule 
 }
 
-Get-ADComputers -ping $ping -data $data -group $group -cvs $csv -delimeter $delimeter
+Get-ADComputers -ping $ping -data $data -group $group -csv $csv -delimeter $delimeter
