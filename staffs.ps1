@@ -22,6 +22,7 @@ function Get-Posts {
     $employees = $response.ParsedHtml.getElementsByClassName("popup__employees-list")
     if($employees.Length -eq 0){
         Write-Error "Не найден: ""$fio"""
+        $user = if($users){ if($users -is [string[]]){ $users[0] }else{ $users } }else{ $null }
         [PSCustomObject]@{
             account = $user.SamAccountName
             enabled = $user.Enabled
