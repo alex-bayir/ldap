@@ -45,7 +45,7 @@ filter Ping {
 }
 
 function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
-    if (Get-Module -All -Name Microsoft.ActiveDirectory.Management) {
+    if (Get-Module -All -Name *ActiveDirectory*) {
 		$list=foreach($fio in Get-Content $data -Encoding UTF8 | Where-Object {$_ -match '\w{4}.*'}) {
 			$users=$null
             if($fio -match '^[a-zA-Z]+$'){
@@ -116,7 +116,7 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
 }
 
 
-if (!(Get-Module -All -Name Microsoft.ActiveDirectory.Management)) {
+if (!(Get-Module -All -Name *ActiveDirectory*)) {
     Import-Module $ADCModule 
 }
 
