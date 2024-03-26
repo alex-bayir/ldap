@@ -22,11 +22,12 @@ function Get-Posts {
     $employees = $response.ParsedHtml.getElementsByClassName("popup__employees-list")
     if($employees.Length -eq 0){
         Write-Error "Не найден: ""$fio"""
-        $user = if($users){ if($users -is [string[]]){ $users[0] }else{ $users } }else{ $null }
-        [PSCustomObject]@{
-            account = $user.SamAccountName
-            enabled = $user.Enabled
-            name = $fio
+        $users | ForEach-Object {
+            [PSCustomObject]@{
+                account = $_.SamAccountName
+                enabled = $_.Enabled
+                name = $fio
+            }
         }
     }else{
         $employees[0].getElementsByTagName("a") | ForEach-Object {
@@ -36,18 +37,18 @@ function Get-Posts {
             $post = $html.getElementsByClassName("content-item__text")[0].textContent.trim()
             $arr=$html.getElementsByClassName("arrow-left") | Where-Object { $_.children.Length -gt 0 -and $_.children } | ForEach-Object { $_.children[0].title } | Where-Object { $_ -ne $null -and $_ -ne "" -and $_ -ne "Структура компании" }
             if(($arr -is [string[]]) -eq $false){ $arr=@($arr) }
-            $user = $users | Where-Object { $_.name -eq $name }
-            $user = if($user){ $user }else{ $null }
-            [PSCustomObject]@{
-                url = $url
-                account = $user.SamAccountName
-                enabled = $user.Enabled
-                name = $name
-                post = $post
-                1 = $arr[0]
-                2 = $arr[1]
-                3 = $arr[2]
-                4 = $arr[3]
+            $users | Where-Object { $_.name -eq $name } | ForEach-Object {
+                [PSCustomObject]@{
+                    url = $url
+                    account = $_.SamAccountName
+                    enabled = $_.Enabled
+                    name = $name
+                    post = $post
+                    1 = $arr[0]
+                    2 = $arr[1]
+                    3 = $arr[2]
+                    4 = $arr[3]
+                }
             }
         }
     }
