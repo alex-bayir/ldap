@@ -24,9 +24,15 @@ function Get-Posts {
         Write-Error "Не найден: ""$fio"""
         $users | ForEach-Object {
             [PSCustomObject]@{
+                url = $null
                 account = $_.SamAccountName
                 enabled = $_.Enabled
                 name = $fio
+                post = $null
+                1 = $null
+                2 = $null
+                3 = $null
+                4 = $null
             }
         }
     }else{
