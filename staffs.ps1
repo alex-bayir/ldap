@@ -7,11 +7,7 @@
 )
 
 if (!(Get-Module -All -Name *ActiveDirectory*)) {
-    if($server){
-        Import-Module $ADCModule -Server $server
-    }else{
-        Import-Module $ADCModule
-    }
+    Import-Module $ADCModule
 }
 function Write-Error($message) {
     [Console]::ForegroundColor = 'red'
@@ -73,7 +69,11 @@ $users = Get-Content $data -Encoding UTF8 | ForEach-Object {
         $user = Get-ADUser $_
         Get-Posts -fio $user.name -users @($user)
     }else{
-        $users = Get-ADUser -LDAPFilter "(|(Name=*$_*)(dispalyName=*$_*)(cn=*$_*)(UserPrincipalName=*$_*))" -SearchBase "DC=oek,DC=ru" -Properties *
+        if($server){
+            $users = Get-ADUser -Server $server -LDAPFilter "(|(Name=*$_*)(dispalyName=*$_*)(cn=*$_*)(UserPrincipalName=*$_*))" -SearchBase "DC=oek,DC=ru" -Properties *
+        }else{
+            $users = Get-ADUser -LDAPFilter "(|(Name=*$_*)(dispalyName=*$_*)(cn=*$_*)(UserPrincipalName=*$_*))" -SearchBase "DC=oek,DC=ru" -Properties *
+        }
         Get-Posts -fio $_ -users $users
     }
 }
