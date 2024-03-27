@@ -1,12 +1,17 @@
 ﻿param(
     [Parameter(Mandatory=$true)][String]$data,
+    [string]$server=$null,
     [string]$csv,
     [string]$delimeter=$null,
     [string]$ADCModule="Y:\Corps\СИБ\Байрашный\ADModule\Microsoft.ActiveDirectory.Management.dll"
 )
 
 if (!(Get-Module -All -Name *ActiveDirectory*)) {
-    Import-Module $ADCModule 
+    if($server){
+        Import-Module $ADCModule -Server $server
+    }else{
+        Import-Module $ADCModule
+    }
 }
 function Write-Error($message) {
     [Console]::ForegroundColor = 'red'
@@ -29,6 +34,7 @@ function Get-Posts {
                 enabled = $_.Enabled
                 name = $fio
                 post = $null
+                division = $null
                 1 = $null
                 2 = $null
                 3 = $null
@@ -50,6 +56,7 @@ function Get-Posts {
                     enabled = $_.Enabled
                     name = $name
                     post = $post
+                    division = $arr[-1]
                     1 = $arr[0]
                     2 = $arr[1]
                     3 = $arr[2]
