@@ -14,11 +14,7 @@ function Write-Error($message) {
     [Console]::Error.WriteLine($message)
     [Console]::ResetColor()
 }
-function Get-Posts {
-    param (
-        [Parameter(Mandatory=$true)][String]$fio,
-        $users=@()
-    )
+function Get-Posts ([Parameter(Mandatory=$true)][String]$fio,[Object[]]$users=@()){
     $response = Invoke-WebRequest -Method Post 'http://uneco2.ru/local/ajax/header_search.php' -Body @{ 'phrase' = $fio } -ContentType 'application/x-www-form-urlencoded; charset=UTF-8'
     $employees = $response.ParsedHtml.getElementsByClassName("popup__employees-list")
     if($employees.Length -eq 0){
@@ -45,7 +41,7 @@ function Get-Posts {
             $post = $html.getElementsByClassName("content-item__text")[0].textContent.trim()
             $arr=$html.getElementsByClassName("arrow-left") | Where-Object { $_.children.Length -gt 0 -and $_.children } | ForEach-Object { $_.children[0].title } | Where-Object { $_ -ne $null -and $_ -ne "" -and $_ -ne "Структура компании" }
             if(($arr -is [string[]]) -eq $false){ $arr=@($arr) }
-            $users | Where-Object { $_.name -eq $name } | ForEach-Object {
+            $users | Where-Object { ($_.name -replace "ё","e") -eq ($name -replace "ё","е") } | ForEach-Object {
                 [PSCustomObject]@{
                     url = $url
                     account = $_.SamAccountName
