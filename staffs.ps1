@@ -39,9 +39,9 @@ function Get-Posts ([Parameter(Mandatory=$true)][String]$fio,[Object[]]$users=@(
             $html=(Invoke-WebRequest $url).ParsedHtml
             $name = $html.getElementsByClassName("content-item__title")[0].textContent.trim() -replace "[^а-яёА-ЯЁ a-zA-Z]",""
             $post = $html.getElementsByClassName("content-item__text")[0].textContent.trim()
-            $arr=$html.getElementsByClassName("arrow-left") | Where-Object { $_.children.Length -gt 0 -and $_.children } | ForEach-Object { $_.children[0].title } | Where-Object { $_ -ne $null -and $_ -ne "" -and $_ -ne "Структура компании" }
+            $arr = $html.getElementsByClassName("arrow-left") | Where-Object { $_.children.Length -gt 0 -and $_.children } | ForEach-Object { $_.children[0].title } | Where-Object { $_ -ne $null -and $_ -ne "" -and $_ -ne "Структура компании" }
             if(($arr -is [string[]]) -eq $false){ $arr=@($arr) }
-            $users | Where-Object { ($_.name -replace "ё","e") -eq ($name -replace "ё","е") } | ForEach-Object {
+            $users | Where-Object { ($_.name -replace "ё","е") -eq ($name -replace "ё","е") } | ForEach-Object {
                 [PSCustomObject]@{
                     url = $url
                     account = $_.SamAccountName
