@@ -102,7 +102,11 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
 		}
 		
 		$delimeter=$(if ($delimeter.Length -gt 0) {$delimeter} else {","})
-		$list=$list | Select-Object -Property Name,AccountName,Available,Hosts,IPs,UserName,UserEnabled,CN
+		if($group){
+			$list=$list | Select-Object -Property Name,AccountName,Available,Hosts,IPs,UserName,UserEnabled,CN
+		}else{
+			$list=$list | Select-Object -Property Name,AccountName,Available,Host,IP,UserName,UserEnabled,CN
+		}
 		if($csv -gt 0){
 			$list | Export-CSV $csv -NoTypeInformation -Delimiter $delimeter -Encoding utf8
 		}else{
