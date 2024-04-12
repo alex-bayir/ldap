@@ -57,14 +57,14 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
 				foreach($user in $users){
                     #Write-Output $user
 			        $account=$user.SamAccountName
-			        $computers=Get-ADComputer -LDAPFilter "(|(uid=*$account*)(dispalyName=*$account*)(cn=*$account*)(sn=*$account*))" -SearchBase "DC=oek,DC=ru" -Properties *  
+			        $computers=Get-ADComputer -LDAPFilter "(|(DNSHostName=*$account*)(Name=*$account*))" -SearchBase "DC=oek,DC=ru" -Properties *  
                     if($group){
 						[PSCustomObject]@{
 							Name           = $user.Name
 							AccountName    = $user.SamAccountName 
-							Available      = if($ping){($computers | Ping | foreach-object  {$_.Name}) -join ", "}else{"Not checked"}
-							Hosts          = ($computers | foreach-object  {$_.Name}) -join ", "
-                            IPs            = if($ping){($computers | foreach-object  {(Resolve-DNSName $_.Name -ErrorAction SilentlyContinue).IPAddress}) -join ", "}else{"Not checked"}
+							Available      = if($ping){($computers | Ping | foreach-object  {$_.DNSHostName}) -join ", "}else{"Not checked"}
+							Hosts          = ($computers | foreach-object  {$_.DNSHostName}) -join ", "
+                            IPs            = if($ping){($computers | foreach-object  {(Resolve-DNSName $_.DNSHostName -ErrorAction SilentlyContinue).IPAddress}) -join ", "}else{"Not checked"}
 							UserName       = $user.UserPrincipalName -replace "@oek.ru", ""
 							UserEnabled    = $user.Enabled
 							CN             = $user.DistinguishedName
@@ -75,9 +75,9 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=$null){
 								[PSCustomObject]@{
 									Name           = $user.Name
 									AccountName    = $user.SamAccountName 
-									Available      = if($ping){isAvailable -computer $computer.Name}else{"Not checked"}
-									Host           = $computer.Name
-									IP             = if($ping){(Resolve-DNSName $computer.Name -ErrorAction SilentlyContinue).IPAddress}else{"Not checked"}
+									Available      = if($ping){isAvailable -computer $computer.DNSHostName}else{"Not checked"}
+									Host           = $computer.DNSHostName
+									IP             = if($ping){(Resolve-DNSName $computer.DNSHostName -ErrorAction SilentlyContinue).IPAddress}else{"Not checked"}
 									UserName       = $user.UserPrincipalName -replace "@oek.ru", ""
 									UserEnabled    = $user.Enabled
 									CN             = $user.DistinguishedName
