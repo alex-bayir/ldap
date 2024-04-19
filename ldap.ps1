@@ -24,7 +24,7 @@ https://github.com/samratashok/ADModule
 .EXAMPLE
 .\ldap.ps1 -data "C:\Users\User1\Documents\ФИО.txt" -csv "mylist.csv" -delimeter ";"
 .EXAMPLE
-.\ldap.ps1 -data "C:\Users\User1\Documents\ФИО.txt" -csv "mylist.csv" -delimeter ";" -ADModule "C:\Users\User1\Downloads\ADModule\Microsoft.ActiveDirectory.Management.dll"
+.\ldap.ps1 -data "C:\Users\User1\Documents\ФИО.txt" -csv "mylist.csv" -delimeter ";" -ADModule "Y:\Corps\СИБ\_ДИБ\Личные папки\Байрашный\powershell\ADModule\Microsoft.ActiveDirectory.Management.dll"
 #>
 
 param(
@@ -33,7 +33,7 @@ param(
     [string]$delimeter=$null,
     [switch]$ping=$false,
     [switch]$group=$false,
-    [string]$ADCModule="Y:\Corps\СИБ\Байрашный\ADModule\Microsoft.ActiveDirectory.Management.dll"
+    [string]$ADCModule="Y:\Corps\СИБ\_ДИБ\Личные папки\Байрашный\powershell\ADModule\Microsoft.ActiveDirectory.Management.dll"
 )
 
 function isAvailable($computer){
