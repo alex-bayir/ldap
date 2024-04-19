@@ -15,7 +15,7 @@ function Write-Error($message) {
     [Console]::ResetColor()
 }
 function Get-Posts ([Parameter(Mandatory=$true)][String]$fio,[Object[]]$users=@()){
-    $response = Invoke-WebRequest -Method Post 'http://uneco2.ru/local/ajax/header_search.php' -Body @{ 'phrase' = $fio } -ContentType 'application/x-www-form-urlencoded; charset=UTF-8'
+    $response = Invoke-WebRequest -Method Post 'https://uneco2.ru/local/ajax/header_search.php' -Body @{ 'phrase' = $fio } -ContentType 'application/x-www-form-urlencoded; charset=UTF-8'
     $employees = $response.ParsedHtml.getElementsByClassName("popup__employees-list")
     if($employees.Length -eq 0){
         Write-Error "Не найден: ""$fio"""
