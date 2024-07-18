@@ -63,61 +63,59 @@ function Get-ADComputers($ping=$true,$data,$group=$false,$csv,$delimeter=';',$gr
             if($users){
 				foreach($user in $users){
 					$s=if($user){($user.CanonicalName -replace "/$($user.Name)","").split("/")}else{@()}
-			        $account=$user.SamAccountName
-			        $computers=Get-ADComputer -LDAPFilter "(|(DNSHostName=*$account*)(Name=*$account*))" -SearchBase "DC=oek,DC=ru" -Properties *  
-                    if($group){
+					$account=$user.SamAccountName
+					$computers=Get-ADComputer -LDAPFilter "(|(DNSHostName=*$account*)(Name=*$account*))" -SearchBase "DC=oek,DC=ru" -Properties *
+					if($null -eq $computers){
 						[PSCustomObject]@{
 							account = $user.SamAccountName
-        					enabled = $user.Enabled
-        					email = $user.EmailAddress
-        					name = Fix-Name $user.Name
-        					post = Fix-Name $user.Title
-        					office = Fix-Name $s[2]
-        					departament = Fix-Name $s[3]
-        					division = Fix-Name $s[4]
-        					groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
+							enabled = $user.Enabled
+							email = $user.EmailAddress
+							name = Fix-Name $user.Name
+							post = Fix-Name $user.Title
+							office = Fix-Name $s[2]
+							departament = Fix-Name $s[3]
+							division = Fix-Name $s[4]
+							groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
+						}
+					}elseif ($group) {
+						[PSCustomObject]@{
+							account = $user.SamAccountName
+							enabled = $user.Enabled
+							email = $user.EmailAddress
+							name = Fix-Name $user.Name
+							post = Fix-Name $user.Title
+							office = Fix-Name $s[2]
+							departament = Fix-Name $s[3]
+							division = Fix-Name $s[4]
+							groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
 							available = if($ping){($computers | Ping | foreach-object  {$_.DNSHostName}) -join ", "}else{"Not checked"}
 							hosts = ($computers | foreach-object  {$_.DNSHostName}) -join ", "
-                            ips = if($ping){($computers | foreach-object  {(Resolve-DNSName $_.DNSHostName -ErrorAction SilentlyContinue).IPAddress}) -join ", "}else{"Not checked"}
+							ips = if($ping){($computers | foreach-object  {(Resolve-DNSName $_.DNSHostName -ErrorAction SilentlyContinue).IPAddress}) -join ", "}else{"Not checked"}
 						}
-                    }else{
-                        if($computers){
-							foreach($computer in $computers){
-								[PSCustomObject]@{
-									account = $user.SamAccountName
-        							enabled = $user.Enabled
-        							email = $user.EmailAddress
-        							name = Fix-Name $user.Name
-        							post = Fix-Name $user.Title
-        							office = Fix-Name $s[2]
-        							departament = Fix-Name $s[3]
-        							division = Fix-Name $s[4]
-        							groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
-									available = if($ping){isAvailable -computer $computer.DNSHostName}else{"Not checked"}
-									host = $computer.DNSHostName
-									ip = if($ping){(Resolve-DNSName $computer.DNSHostName -ErrorAction SilentlyContinue).IPAddress}else{"Not checked"}
-								}
-							}
-                        }else{
+					}else{
+						foreach($computer in $computers){
 							[PSCustomObject]@{
 								account = $user.SamAccountName
-        						enabled = $user.Enabled
-        						email = $user.EmailAddress
-        						name = Fix-Name $user.Name
-        						post = Fix-Name $user.Title
-        						office = Fix-Name $s[2]
-        						departament = Fix-Name $s[3]
-        						division = Fix-Name $s[4]
-        						groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
-                            }
+								enabled = $user.Enabled
+								email = $user.EmailAddress
+								name = Fix-Name $user.Name
+								post = Fix-Name $user.Title
+								office = Fix-Name $s[2]
+								departament = Fix-Name $s[3]
+								division = Fix-Name $s[4]
+								groups = if($groups){($user.MemberOf | ForEach-Object { ($_ -replace "(CN|OU|DC)=","") -replace ",","/" }) -join $groups}else{$null}
+								available = if($ping){isAvailable -computer $computer.DNSHostName}else{"Not checked"}
+								host = $computer.DNSHostName
+								ip = if($ping){(Resolve-DNSName $computer.DNSHostName -ErrorAction SilentlyContinue).IPAddress}else{"Not checked"}
+							}
 						}
 					}
-                }
-            }else{
-                [PSCustomObject]@{
-				    name = $fio
-                }
-            }
+				}
+			}else{
+				[PSCustomObject]@{
+					name = $fio
+				}
+			}
 		}
 		
 		if($group){
